@@ -7,7 +7,7 @@ import "./../app/app.css";
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
-import { uploadData, list } from 'aws-amplify/storage';
+import { uploadData, list, getUrl } from 'aws-amplify/storage';
 import { Authenticator, Button } from '@aws-amplify/ui-react';
 
 Amplify.configure(outputs);
@@ -15,7 +15,6 @@ Amplify.configure(outputs);
 const client = generateClient<Schema>();
 
 export default function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
   const [file, setFile] = useState<File | null>(null);
   const [images, setImages] = useState<{
     versionId?: string | undefined;
@@ -24,23 +23,12 @@ export default function App() {
     size?: number | undefined;
     eTag?: string | undefined;
     path: string;
+    url: string,
   }[]>([]);
 
-  function listTodos() {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }
-
   useEffect(() => {
-    listTodos();
+    fetchImages();
   }, []);
-
-  function createTodo() {
-    client.models.Todo.create({
-      content: window.prompt("Todo content"),
-    });
-  }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
     if (event.target.files && event.target.files.length > 0) {
@@ -73,16 +61,23 @@ export default function App() {
 
   async function fetchImages() {
     try {
-      // 1. List all items (files) in the specific folder
       const { items } = await list({
-        path: 'picture-submissions',
+        path: 'picture-submissions/', // Trailing backslash designates the folder.
       });
 
       if (items.length === 0) {
         console.log("No images found in the folder.");
       }
+      console.log(items)
+      const itemsWithUrl = await Promise.all(items.map(async (x) => {
+        const result = await getUrl({
+          path: x.path,
+        });
+        return {...x, url: result.url.toString()};
+      }));
+      console.log(itemsWithUrl)
 
-      setImages(items);
+      setImages(itemsWithUrl);
     } catch (error) {
       console.error("Error fetching images:", error);
     }
@@ -92,15 +87,10 @@ export default function App() {
     
       <main>
         <h1>My favorite Kiwi names!</h1>
-        <button onClick={createTodo}>+ new</button>
+        <button onClick={fetchImages}>Fetch Images</button>
         <ul>
-          {todos.map((todo) => (
-            <li key={todo.id}>{todo.content}</li>
-          ))}
-        </ul>
-        <ul>
-          {images.map((todo) => (
-            <li key={todo.path}>{todo.path}</li>
+          {images.map((result, index) => (
+            <li key={index}><img src={result.url} height='50px' /></li>
           ))}
         </ul>
         <Authenticator>
