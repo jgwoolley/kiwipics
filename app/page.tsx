@@ -1,33 +1,29 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { Amplify } from "aws-amplify";
+import type { Schema } from "@/amplify/data/resource";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
-import { uploadData, list, getUrl } from 'aws-amplify/storage';
-import { Authenticator, Button } from '@aws-amplify/ui-react';
-import Link from "next/link";
+import { Amplify } from "aws-amplify";
 import { AuthUser, getCurrentUser } from 'aws-amplify/auth';
+import { generateClient } from "aws-amplify/data";
+import { getUrl, remove } from 'aws-amplify/storage';
+import { useEffect, useState } from "react";
 
 Amplify.configure(outputs);
+const client = generateClient<Schema>();
+
+type FinalPicture = {
+  id: string,
+  path: string,
+  url: string,
+  kiwiName?: string,
+  lat?: number,
+  long?: number,
+}
 
 export default function App() {
   const [user, setUser] = useState<AuthUser>();
-  const [file, setFile] = useState<File | null>(null);
-  const [images, setImages] = useState<{
-    versionId?: string | undefined;
-    contentType?: string | undefined;
-    lastModified?: Date | undefined;
-    size?: number | undefined;
-    eTag?: string | undefined;
-    path: string;
-    url: string,
-  }[]>([]);
-
-  useEffect(() => {
-    fetchUser();
-    fetchImages();
-  }, []);
+  const [images, setImages] = useState<FinalPicture[]>([]);
 
   async function fetchUser() {
     try {
@@ -40,92 +36,101 @@ export default function App() {
     }
   }
 
-  async function fetchImages() {
-    try {
-      const { items } = await list({
-        path: 'picture-submissions/', // Trailing backslash designates the folder.
-      });
-
-      if (items.length === 0) {
-        console.log('No images found in the folder.');
-      }
-      console.log(items)
-      const itemsWithUrl = await Promise.all(items.map(async (x) => {
-        const result = await getUrl({
-          path: x.path,
-        });
-        return { ...x, url: result.url.toString() };
-      }));
-      console.log(itemsWithUrl)
-
-      setImages(itemsWithUrl);
-    } catch (error) {
-      console.error("Error fetching images:", error);
-    }
+  async function fetchPictures() {
+    client.models.Picture.observeQuery().subscribe({
+      next: async (results) => {
+        const newImages: FinalPicture[] = []
+        for (const picture of results.items) {
+          if (picture.picturePath == undefined) {
+            continue;
+          }
+          const urlResult = await getUrl({
+            path: picture.picturePath,
+          });
+          
+          newImages.push({
+            id: picture.id,
+            path: picture.picturePath,
+            url: urlResult.url.toString(),
+            kiwiName: picture.kiwiName ?? undefined,
+            lat: picture.lat ?? undefined,
+            long: picture.long ?? undefined,
+          });
+        }
+        setImages([...images, ...newImages]);
+      },
+    });
   }
 
+  useEffect(() => {
+    fetchUser();
+    fetchPictures();
+  }, []);
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    if (event.target.files && event.target.files.length > 0) {
-      setFile(event.target.files[0]);
-    }
-  }
-
-  async function handleUpload(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> {
-    if (!file) return;
-
-    try {
-      // Use a unique key for the file in S3, e.g., combining the file name with a timestamp
-      const filename = `${Date.now()}-${file.name}`;
-
-      const response = uploadData({
-        path: `picture-submissions/${filename}`,
-        data: file,
-      });
-
-      const result = await response.result;
-
-      console.log('Successfully uploaded file:', result);
-      // You can now store 'result.key' or 'filename' in your database.
-
-    } catch (error) {
-      console.error('Error uploading file:', error);
-    }
-    fetchImages();
-  }
+  
 
   return (
 
     <main>
       <h3>Community Pictures</h3>
-      <div style={{
-        maxWidth: '20%',
-        margin: 'auto',
-        overflow: 'hidden',
-        borderRadius: '8px',
-      }}>
-        <div style={{
-          display: 'flex',
-          overflowX: 'auto',
-          scrollSnapType: 'x mandatory',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          gap: '10px',
-        }}>
-          {images.map((result, index) => (
+
+      <div
+        style={{
+          overflowY: 'auto',
+          maxWidth: '80%',
+          margin: '0 auto',
+          padding: '1rem',
+        }}
+      >
+
+        {images.map((picture, index) => (
+          <figure
+            key={index}
+            style={{
+              display: 'block',
+              margin: '1rem auto',
+              clear: 'both',
+              padding: '1rem',
+              border: '.25rem solid #ccc',
+              textAlign: 'center',
+            }}
+          >
             <img
-              key={index}
-              src={result.url}
+              src={picture.url}
+              alt={picture.kiwiName}
               style={{
-                flex: '1 0 100%',
-                scrollSnapAlign: 'start',
-                height: 'auto',
-                objectFit: 'cover',
                 maxWidth: '100%',
+                height: 'auto',
+                display: 'block',
+                margin: '0 auto',
               }}
             />
-          ))}
-        </div>
+            <figcaption
+              style={{
+                marginTop: '1rem',
+                color: '#333'
+              }}
+            >
+              <span
+                style={{
+                  fontStyle: 'italic',
+                }}
+              >{picture.kiwiName}</span>
+              {user && (
+                <span
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                  onClick={async () => {
+                    await client.models.Picture.delete({id: picture.id});
+                    await remove({ path: picture.path });
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                  }}
+                > 🚫</span>
+              )}
+            </figcaption>
+          </figure>
+        ))}
       </div>
     </main>
   );

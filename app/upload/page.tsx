@@ -8,8 +8,12 @@ import { uploadData } from 'aws-amplify/storage';
 import Link from "next/link";
 import { AuthUser, getCurrentUser } from 'aws-amplify/auth';
 import { useRouter } from "next/navigation";
+import type { Schema } from "@/amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
 
 Amplify.configure(outputs);
+
+const client = generateClient<Schema>();
 
 export default function App() {
   const [user, setUser] = useState<AuthUser>();
@@ -41,11 +45,10 @@ export default function App() {
     if (!file) return;
 
     try {
-      // Use a unique key for the file in S3, e.g., combining the file name with a timestamp
-      const filename = `${Date.now()}-${file.name}`;
+      const picturePath = `picture-submissions/${Date.now()}-${file.name}`;
 
       const response = uploadData({
-        path: `picture-submissions/${filename}`,
+        path: picturePath,
         data: file,
         options: {
           metadata: {
@@ -53,11 +56,19 @@ export default function App() {
           },
         },
       });
+      console.log(response);
 
-      const result = await response.result;
+      const contentResult = await response.result;
 
-      console.log('Successfully uploaded file:', result);
-      // You can now store 'result.key' or 'filename' in your database.
+      console.log('Successfully uploaded content:', contentResult);
+
+      const metadataResult = client.models.Picture.create({
+        kiwiName: kiwiName,
+        lat: 0,
+        long: 0,
+        picturePath: picturePath,
+      });
+      console.log('Successfully uploaded metadata:', metadataResult);
 
       router.push('/');
     } catch (error) {
@@ -71,31 +82,31 @@ export default function App() {
 
     <main>
       <h3>Upload Pictures!</h3>
-      <p style={{marginBottom: '1rem'}}>
+      <p style={{ marginBottom: '1rem' }}>
         <Link href="/login">{user ? 'Click to signout.' : 'You will need to login.'}</Link>
       </p>
-      <div style={{marginBottom: '1rem'}}>
+      <div style={{ marginBottom: '1rem' }}>
         <label htmlFor="kiwiImage">Kiwi Image: </label>
-        <input 
+        <input
           id="kiwiImage"
-          type="file" 
-          onChange={handleFileChange} 
-          accept="image/*" 
-          disabled={!user} 
+          type="file"
+          onChange={handleFileChange}
+          accept="image/*"
+          disabled={!user}
         />
       </div>
-      <div style={{marginBottom: '1rem'}}>
+      <div style={{ marginBottom: '1rem' }}>
         <label htmlFor="kiwiName">Kiwi Name: </label>
-        <input 
-          id="kiwiName" 
-          value={kiwiName} 
-          onChange={(e) => setKiwiName(e.target.value)} 
+        <input
+          id="kiwiName"
+          value={kiwiName}
+          onChange={(e) => setKiwiName(e.target.value)}
         />
       </div>
-      <button 
-        onClick={handleUpload} 
+      <button
+        onClick={handleUpload}
         disabled={disableUpload}
-        style={{marginBottom: '1rem'}}
+        style={{ marginBottom: '1rem' }}
       >
         Upload Image
       </button>
