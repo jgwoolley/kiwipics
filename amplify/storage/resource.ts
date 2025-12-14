@@ -4,8 +4,11 @@ export const storage = defineStorage({
   name: 'kiwiPics',
   access: (allow) => ({
     'picture-submissions/*': [
-      allow.authenticated.to(['read','write']),
+      allow.authenticated.to(['read', 'write']),
       allow.guest.to(['read'])
+    ],
+    "": [
+      allow.authenticated.to(["read"]),
     ],
   })
 });
