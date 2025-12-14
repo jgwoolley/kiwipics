@@ -101,6 +101,7 @@ export default function App() {
           id="kiwiName"
           value={kiwiName}
           onChange={(e) => setKiwiName(e.target.value)}
+          disabled={!user}
         />
       </div>
       <button

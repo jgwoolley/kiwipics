@@ -1,0 +1,50 @@
+body {
+    background-color: rgb(174, 110, 81);
+    color: white;
+}
+
+h1 {
+    text-align: center;
+}
+
+main {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+/* Unvisited link */
+a:link {
+    color: green;
+}
+
+/* Visited link */
+a:visited {
+    color: limegreen;
+}
+
+.navbar ul {
+    list-style-type: none;
+    background-color: brown;
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 1rem;
+    display: block;
+    text-align: center;
+}
+.navbar a:hover {
+    background-color: limegreen;
+    color: black;
+}
+
+.navbar li {
+    float: left
+}
+
+
+

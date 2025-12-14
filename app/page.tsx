@@ -7,6 +7,7 @@ import { Amplify } from "aws-amplify";
 import { AuthUser, getCurrentUser } from 'aws-amplify/auth';
 import { generateClient } from "aws-amplify/data";
 import { getUrl, remove } from 'aws-amplify/storage';
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 Amplify.configure(outputs);
@@ -70,10 +71,9 @@ export default function App() {
   
 
   return (
-
     <main>
       <h3>Community Pictures</h3>
-
+      {images.length === 0 && <Link href="/upload">All the Kiwis are gone! Upload a new one!</Link>}
       <div
         style={{
           overflowY: 'auto',
@@ -82,7 +82,6 @@ export default function App() {
           padding: '1rem',
         }}
       >
-
         {images.map((picture, index) => (
           <figure
             key={index}
