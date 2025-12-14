@@ -2,9 +2,26 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import './navigation.css';
 
+const TITLE = 'Kiwipics';
+const DESCRIPTION = 'Pictures of your favorite kiwi birds!';
+
 export const metadata: Metadata = {
-  title: "Kiwipics",
-  description: "Pictures of your favorite kiwi birds!",
+  title: TITLE,
+  description: DESCRIPTION,
+  authors: [{
+    name: 'James Woolley',
+    url: 'https://github.com/jgwoolley/',
+  }],
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: 'https://www.kiwipics.com/',
+    siteName: TITLE,
+    images: [{
+      url: 'https://www.kiwipics.com/amplify.svg',
+      type: 'image/svg+xml',
+    }],
+  },
 };
 
 export default function RootLayout({
