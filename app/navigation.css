@@ -14,12 +14,12 @@ main {
 
 /* Unvisited link */
 a:link {
-    color: green;
+    color: white;
 }
 
 /* Visited link */
 a:visited {
-    color: limegreen;
+    color: white;
 }
 
 .navbar ul {

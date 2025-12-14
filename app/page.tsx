@@ -75,7 +75,7 @@ export default function App() {
       <div
         style={{
           overflowY: 'auto',
-          maxWidth: '80%',
+          maxWidth: '60vh',
           margin: '0 auto',
           padding: '1rem',
         }}
@@ -96,7 +96,7 @@ export default function App() {
               src={picture.url}
               alt={picture.kiwiName}
               style={{
-                maxWidth: '30%',
+                maxWidth: '90%',
                 height: 'auto',
                 display: 'block',
                 margin: '0 auto',
