@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./app.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Kiwipics",
@@ -16,7 +13,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body>
+        <h1>KiwiPics - A place to share pictures of Kiwis!</h1>
+        <ul>
+          <li><Link href="/">Home</Link></li>
+          <li><Link href="/upload">Image Upload</Link></li>
+          <li><Link href="/login">Login</Link></li>
+        </ul>
+        {children}
+        </body>
     </html>
   );
 }

@@ -1,20 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
-import "./../app/app.css";
+import { useState, useEffect, useMemo } from "react";
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import { uploadData, list, getUrl } from 'aws-amplify/storage';
 import { Authenticator, Button } from '@aws-amplify/ui-react';
+import Link from "next/link";
+import { AuthUser, getCurrentUser } from 'aws-amplify/auth';
 
 Amplify.configure(outputs);
 
-const client = generateClient<Schema>();
-
 export default function App() {
+  const [user, setUser] = useState<AuthUser>();
   const [file, setFile] = useState<File | null>(null);
   const [images, setImages] = useState<{
     versionId?: string | undefined;
@@ -27,8 +25,45 @@ export default function App() {
   }[]>([]);
 
   useEffect(() => {
+    fetchUser();
     fetchImages();
   }, []);
+
+  async function fetchUser() {
+    try {
+      const userDetails = await getCurrentUser();
+      setUser(userDetails);
+
+    } catch (error) {
+      console.log("User is not logged in:", error);
+      setUser(undefined);
+    }
+  }
+
+  async function fetchImages() {
+    try {
+      const { items } = await list({
+        path: 'picture-submissions/', // Trailing backslash designates the folder.
+      });
+
+      if (items.length === 0) {
+        console.log('No images found in the folder.');
+      }
+      console.log(items)
+      const itemsWithUrl = await Promise.all(items.map(async (x) => {
+        const result = await getUrl({
+          path: x.path,
+        });
+        return { ...x, url: result.url.toString() };
+      }));
+      console.log(itemsWithUrl)
+
+      setImages(itemsWithUrl);
+    } catch (error) {
+      console.error("Error fetching images:", error);
+    }
+  }
+
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
     if (event.target.files && event.target.files.length > 0) {
@@ -59,57 +94,39 @@ export default function App() {
     fetchImages();
   }
 
-  async function fetchImages() {
-    try {
-      const { items } = await list({
-        path: 'picture-submissions/', // Trailing backslash designates the folder.
-      });
-
-      if (items.length === 0) {
-        console.log("No images found in the folder.");
-      }
-      console.log(items)
-      const itemsWithUrl = await Promise.all(items.map(async (x) => {
-        const result = await getUrl({
-          path: x.path,
-        });
-        return {...x, url: result.url.toString()};
-      }));
-      console.log(itemsWithUrl)
-
-      setImages(itemsWithUrl);
-    } catch (error) {
-      console.error("Error fetching images:", error);
-    }
-  }
-
   return (
-    
-      <main>
-        <h1>My favorite Kiwi names!</h1>
-        <button onClick={fetchImages}>Fetch Images</button>
-        <ul>
+
+    <main>
+      <h3>Community Pictures</h3>
+      <div style={{
+        maxWidth: '20%',
+        margin: 'auto',
+        overflow: 'hidden',
+        borderRadius: '8px',
+      }}>
+        <div style={{
+          display: 'flex',
+          overflowX: 'auto',
+          scrollSnapType: 'x mandatory',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          gap: '10px',
+        }}>
           {images.map((result, index) => (
-            <li key={index}><img src={result.url} height='50px' /></li>
+            <img
+              key={index}
+              src={result.url}
+              style={{
+                flex: '1 0 100%',
+                scrollSnapAlign: 'start',
+                height: 'auto',
+                objectFit: 'cover',
+                maxWidth: '100%',
+              }}
+            />
           ))}
-        </ul>
-        <Authenticator>
-          {({signOut, user}) =>{
-            return (
-              <>
-                <Button onClick={signOut} style={{ marginBottom: '20px' }}>
-                  Sign Out
-                </Button>
-                <input type="file" onChange={handleFileChange} accept="image/*" />
-                <button onClick={handleUpload} disabled={!file}>
-                  Upload Image
-                </button>
-              </>
-            )
-          }}
-        </Authenticator>
-        <div>
         </div>
-      </main>
+      </div>
+    </main>
   );
 }
