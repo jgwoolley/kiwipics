@@ -19,6 +19,7 @@ export default function RootLayout({
           <li><Link href="/">Home</Link></li>
           <li><Link href="/upload">Image Upload</Link></li>
           <li><Link href="/login">Login</Link></li>
+          <li><a href="https://github.com/jgwoolley/kiwipics">Source</a></li>
         </ul>
         {children}
         </body>
