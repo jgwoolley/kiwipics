@@ -68,6 +68,8 @@ export default function App() {
     fetchPictures();
   }, []);
 
+  
+
   return (
     <main>
       <h3>Community Pictures</h3>
@@ -75,7 +77,7 @@ export default function App() {
       <div
         style={{
           overflowY: 'auto',
-          maxHeight: '60vh',
+          maxWidth: '80%',
           margin: '0 auto',
           padding: '1rem',
         }}
@@ -96,8 +98,8 @@ export default function App() {
               src={picture.url}
               alt={picture.kiwiName}
               style={{
-                maxHeight: '90%',
-                width: 'auto',
+                maxWidth: '100%',
+                height: 'auto',
                 display: 'block',
                 margin: '0 auto',
               }}

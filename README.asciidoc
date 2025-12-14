@@ -1,0 +1,82 @@
+= KiwiPics
+
+I am James Woolley, and I created this website for my final project for CSCI90: Cloud Services, Infrastructure, and Computing. This is a photo gallery for uploading pictures of everyone's favorite flightless bird the Kiwi. I spent 6 months working in New Zealand. And I thought it would be fun to theme my project on that trip.
+
+*Key Features*
+
+* Ability for unauthenticated users to see photos uploaded by other users.
+* Ability for authenticated users to upload new photos for other users to see, and delete photos. Users should be required to give the name of the Kiwi pictured.
+* Ability to login, signout, change password, and delete account.
+
+== Deploy Site
+
+These are the steps for deploying your site.
+
+=== Cloudflare
+
+An optional step is to purchase your own domain. I chose Cloudflare, however, you could purchase directly from Route53.
+
+- Create your Cloudflare account.
+- Add payment details in Profile
+- Within Account home, click "buy a domain".
+- Search for your domain.
+- Complete purchase.
+
+=== Github
+
+You'll want to identify the Amplify repository you wish to deploy. We will be cloning my repository, but I chose to use an AWS template instead.
+
+- Select the repository.
+- Fork the repository. Make note of this repository.
+
+=== AWS Amplify
+
+In these steps we will be getting the main Amplify services up and running.
+
+* In the step "Choose source code provider", select "Github". Click "Next".
+* A GitHub popup will open.
+** Sign in to your GitHub account.
+** Choose "Only select repositories", and select the forked repository.
+* Within "App Settings":
+** Select the main/master branch.
+** Name the app.
+** NextJS & Amplify Gen 2 should be listed as "Auto-detected frameworks".
+** Select "create and use a new service role".
+** Click Next.
+* If you purchased your own domain from CloudFlare, you should specify it. Only include the root of the domain (i.e. kiwipics.com not https://www.kiwipics.com).
+** You should be prompted with DNS entries you will need to enter in CloudFlare.
+*** Name server records are "NS" type. Specify @ for the name, and the value as the Nameserver.
+** Select Amplify managed certificate.
+
+=== IAM Identity Center
+
+In order to make any changes to the repository, it would be nice to deploy a test version of the stack. In order to do this, you will need to create an IAM Identity Center User.
+
+* Within IAM Identity Center
+** Confirm "Current AWS Region" is correct.
+** Click enable.
+* Open CloudShell
+** Copy the following line in as is. It will prompt you to type in a value to be saved to the user_email variable.
+```
+read -p "Enter email address: " user_email # hit enter
+```
+** Copy the following multiline script in as is. You will be prompted if you intended to input a multiline script. Confirm.
+```
+```
+* Open IAM Identity Center confirm your "amplify-admin" account is there.
+
+== Developer Machine
+
+In order to develop, I believe you need a GUI based environment to do the SSO signin.
+
+* Install NodeJS
+** To grab all the dependencies you need, run: `npm install`
+* Install AWS CLI
+** `aws sso login`
+* You will need to boot up the backend by running: `npx ampx sandbox`
+** Open up Amplify and wait until your sandbox is up and running.
+*** Open Amplify in AWS Console.
+*** Select your app.
+*** Select managed sandboxes.
+*** Check if the status says "Deployed", if it has failed you can check the logs to figure out the issue.
+* You then can deploy your local development environment with: `npm run dev`. This will have its own completely independent users and data.
