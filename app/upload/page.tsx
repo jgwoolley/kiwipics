@@ -1,19 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
-import { uploadData, list, getUrl } from 'aws-amplify/storage';
+import { uploadData } from 'aws-amplify/storage';
 import Link from "next/link";
 import { AuthUser, getCurrentUser } from 'aws-amplify/auth';
+import { useRouter } from "next/navigation";
 
 Amplify.configure(outputs);
 
 export default function App() {
   const [user, setUser] = useState<AuthUser>();
   const [file, setFile] = useState<File | null>(null);
-
+  const [kiwiName, setKiwiName] = useState('');
+  const router = useRouter();
   useEffect(() => {
     fetchUser();
   }, []);
@@ -45,6 +47,11 @@ export default function App() {
       const response = uploadData({
         path: `picture-submissions/${filename}`,
         data: file,
+        options: {
+          metadata: {
+            kiwiName: kiwiName,
+          },
+        },
       });
 
       const result = await response.result;
@@ -52,18 +59,44 @@ export default function App() {
       console.log('Successfully uploaded file:', result);
       // You can now store 'result.key' or 'filename' in your database.
 
+      router.push('/');
     } catch (error) {
       console.error('Error uploading file:', error);
     }
   }
 
+  const disableUpload = useMemo(() => !user || !file || kiwiName.length === 0, [user, file, kiwiName])
+
   return (
 
     <main>
       <h3>Upload Pictures!</h3>
-      <p><Link href="/login">{user ? 'Click to signout.': 'You will need to login.' }</Link></p>
-      <input type="file" onChange={handleFileChange} accept="image/*" disabled={!user}/>
-      <button onClick={handleUpload} disabled={!user || !file}>
+      <p style={{marginBottom: '1rem'}}>
+        <Link href="/login">{user ? 'Click to signout.' : 'You will need to login.'}</Link>
+      </p>
+      <div style={{marginBottom: '1rem'}}>
+        <label htmlFor="kiwiImage">Kiwi Image: </label>
+        <input 
+          id="kiwiImage"
+          type="file" 
+          onChange={handleFileChange} 
+          accept="image/*" 
+          disabled={!user} 
+        />
+      </div>
+      <div style={{marginBottom: '1rem'}}>
+        <label htmlFor="kiwiName">Kiwi Name: </label>
+        <input 
+          id="kiwiName" 
+          value={kiwiName} 
+          onChange={(e) => setKiwiName(e.target.value)} 
+        />
+      </div>
+      <button 
+        onClick={handleUpload} 
+        disabled={disableUpload}
+        style={{marginBottom: '1rem'}}
+      >
         Upload Image
       </button>
 
