@@ -48,7 +48,7 @@ export default function App() {
           const urlResult = await getUrl({
             path: picture.picturePath,
           });
-          
+
           newImages.push({
             id: picture.id,
             path: picture.picturePath,
@@ -67,8 +67,6 @@ export default function App() {
     fetchUser();
     fetchPictures();
   }, []);
-
-  
 
   return (
     <main>
@@ -94,16 +92,22 @@ export default function App() {
               textAlign: 'center',
             }}
           >
-            <img
-              src={picture.url}
-              alt={picture.kiwiName}
-              style={{
-                maxWidth: '100%',
-                height: 'auto',
-                display: 'block',
-                margin: '0 auto',
-              }}
-            />
+            <a
+              href={picture.url}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              <img
+                src={picture.url}
+                alt={picture.kiwiName}
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                  display: 'block',
+                  margin: '0 auto',
+                }}
+              />
+            </a>
             <figcaption
               style={{
                 marginTop: '1rem',
@@ -121,7 +125,7 @@ export default function App() {
                     cursor: 'pointer',
                   }}
                   onClick={async () => {
-                    await client.models.Picture.delete({id: picture.id});
+                    await client.models.Picture.delete({ id: picture.id });
                     await remove({ path: picture.path });
                     await new Promise(resolve => setTimeout(resolve, 5000));
                   }}

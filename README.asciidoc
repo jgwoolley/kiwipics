@@ -52,6 +52,8 @@ In these steps we will be getting the main Amplify services up and running.
 
 In order to make any changes to the repository, it would be nice to deploy a test version of the stack. In order to do this, you will need to create an IAM Identity Center User.
 
+See: https://docs.amplify.aws/react/start/account-setup/
+
 * Within IAM Identity Center
 ** Confirm "Current AWS Region" is correct.
 ** Click enable.
@@ -62,8 +64,21 @@ read -p "Enter email address: " user_email # hit enter
 ```
 ** Copy the following multiline script in as is. You will be prompted if you intended to input a multiline script. Confirm.
 ```
+response=$(aws sso-admin list-instances)
+ssoId=$(echo $response | jq '.Instances[0].IdentityStoreId' -r)
+ssoArn=$(echo $response | jq '.Instances[0].InstanceArn' -r)
+email_json=$(jq -n --arg email "$user_email" '{"Type":"Work","Value":$email}')
+response=$(aws identitystore create-user --identity-store-id $ssoId --user-name amplify-admin --display-name 'Amplify Admin' --name Formatted=string,FamilyName=Admin,GivenName=Amplify --emails "$email_json")
+userId=$(echo $response | jq '.UserId' -r)
+response=$(aws sso-admin create-permission-set --name amplify-policy --instance-arn=$ssoArn --session-duration PT12H)
+permissionSetArn=$(echo $response | jq '.PermissionSet.PermissionSetArn' -r)
+aws sso-admin attach-managed-policy-to-permission-set --instance-arn $ssoArn --permission-set-arn $permissionSetArn --managed-policy-arn arn:aws:iam::aws:policy/service-role/AmplifyBackendDeployFullAccess
+accountId=$(aws sts get-caller-identity | jq '.Account' -r)
+aws sso-admin create-account-assignment --instance-arn $ssoArn --target-id $accountId --target-type AWS_ACCOUNT --permission-set-arn $permissionSetArn --principal-type USER --principal-id $userId
+# Hit enter
 ```
 * Open IAM Identity Center confirm your "amplify-admin" account is there.
+* Reset that user's password.
 
 == Developer Machine
 
@@ -80,3 +95,7 @@ In order to develop, I believe you need a GUI based environment to do the SSO si
 *** Select managed sandboxes.
 *** Check if the status says "Deployed", if it has failed you can check the logs to figure out the issue.
 * You then can deploy your local development environment with: `npm run dev`. This will have its own completely independent users and data.
+* When you have a change to commit, and push it. AWS Amplify should deploy the site for you automatically.
+** Open Amplify in AWS Console.
+** Select your app.
+** Check your branch and its status. If the status says "Deployed", if it has failed you can check the logs to figure out the issue. Your latest succesfull build will still be deployed to AWS.
