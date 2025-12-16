@@ -1,0 +1,22 @@
+= Short Video Script
+
+Hello! I am James Woolley. Today I am going to be giving you my final presentation, entitled: KiwiPics - A Photo Gallery utilizing AWS Amplify. After I spent 6 months working in New Zealand, I decided to create a place for users to share pictures of everyone's favorite flightless bird. 
+
+The core technology demonstrated in this project, Amplify brings together many different AWS products together to create front end applications.
+
+* Amplify creates Cognito User Pools to handle client authentication.
+* Amplify can deploy mock environments for developers to test features.
+* Customer files are stored in S3.
+* Customer data is managed through DynamoDB.
+
+Now I will give a brief overview of the functionality of the website.
+
+* https://www.kiwipics.com/ : The main route is where the user first lands when they arrive at the website. It should present them with all of the images that other users have uploaded. If no images have been shared yet, the user should be prompted to add one themselves! A user who has logged in can delete any uploaded picture.
+* https://www.kiwipics.com/upload : This is the route where an authenticated user can provide a photo to upload along with the Kiwi’s name & location. If the user isn’t logged in yet, it should make it clear that the user needs to do so. If the fields are invalid (empty or missing), the user will be told which fields are in error. Once the image is uploaded the user will be redirected to the main route to see their image.
+* https://www.kiwipics.com/login : This page will prompt the user for their username and password utilizing built in AWS Amplify UI components. The user will provide a username and password, and then be prompted to open the verification email sent from AWS. Then the user will be able to go back to this page and see they are logged in. A logged in user will be presented with the opportunity to change their password, logout, or delete their account.
+
+*Considerations*
+
+* There isn't any validation that uploaded images are SFW. Lambdas are built into Amplify, and calls to Amazon Rekognition could be used to do this.
+* Users can delete any picture, pictures aren't associated with any specific user.
+* There are no limits on the amount or size of pictures a user can upload.

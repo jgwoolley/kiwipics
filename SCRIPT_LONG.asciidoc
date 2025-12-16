@@ -1,0 +1,19 @@
+= Short Video Script
+
+Hello! I am James Woolley. Today I am going to be giving you my final presentation, entitled: KiwiPics - A Photo Gallery utilizing AWS Amplify. After I spent 6 months working in New Zealand, I decided to create a place for users to share pictures of everyone's favorite flightless bird. The Key Features of this project are the following:
+
+* Ability for unauthenticated users to see photos uploaded by other users.
+* Ability for authenticated users to upload new photos for other users to see, and delete photos. Users should be required to give the name and location of the Kiwi pictured.
+* Ability to login, signout, change password, and delete account.
+
+The core technology demonstrated in this project, Amplify brings together many different AWS products together to create front end applications.
+
+* Amplify creates Cognito User Pools to handle client authentication.
+* Amplify can deploy mock environments for developers to test features, and developers use IAM Identity Center to do this.
+* Customer files are stored in S3, Amplify will create buckets for each deployment (production / feature branches).
+* Customer data is managed through AWS DynamoDB.
+
+* https://www.kiwipics.com/ : The main route is where the user first lands when they arrive at the website. It should present them with all of the images that other users have uploaded. If no images have been shared yet, the user should be prompted to add one themselves! A user who has logged in can delete any uploaded picture.
+* https://www.kiwipics.com/about : Provides information already included in this document, in regards to what the website is about, and the technologies used.
+* https://www.kiwipics.com/upload : This is the route where an authenticated user can provide a photo to upload along with the Kiwi’s name & location. If the user isn’t logged in yet, it should make it clear that the user needs to do so. If the fields are invalid (empty or missing), the user will be told which fields are in error. Once the image is uploaded the user will be redirected to the main route to see their image.
+* https://www.kiwipics.com/login : This page will prompt the user for their username and password utilizing built in AWS Amplify UI components. The user will provide a username and password, and then be prompted to open the verification email sent from AWS. Then the user will be able to go back to this page and see they are logged in. A logged in user will be presented with the opportunity to change their password, logout, or delete their account.

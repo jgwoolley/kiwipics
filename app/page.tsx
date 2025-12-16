@@ -8,7 +8,7 @@ import { AuthUser, getCurrentUser } from 'aws-amplify/auth';
 import { generateClient } from "aws-amplify/data";
 import { getUrl, remove } from 'aws-amplify/storage';
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 Amplify.configure(outputs);
 const client = generateClient<Schema>();
@@ -56,7 +56,7 @@ export default function App() {
             kiwiLocation: picture.kiwiLocation,
           });
         }
-        setImages([...images, ...newImages]);
+        setImages([...newImages]);
       },
     });
   }
@@ -73,7 +73,7 @@ export default function App() {
       <div
         style={{
           overflowY: 'auto',
-          maxWidth: '80%',
+          maxWidth: '30%',
           margin: '0 auto',
           padding: '1rem',
         }}
@@ -88,6 +88,9 @@ export default function App() {
               padding: '1rem',
               border: '.25rem solid #ccc',
               textAlign: 'center',
+              // ADD THESE TWO LINES:
+              width: '300px', 
+              maxWidth: '90%', // Ensures it stays small on mobile
             }}
           >
             <a
@@ -99,10 +102,11 @@ export default function App() {
                 src={picture.url}
                 alt={`${picture.kiwiName} from ${picture.kiwiLocation}`}
                 style={{
-                  maxWidth: '100%',
+                  width: '100%',   // Now refers to 100% of the 300px figure
                   height: 'auto',
                   display: 'block',
                   margin: '0 auto',
+                  borderRadius: '8px',
                 }}
               />
             </a>
