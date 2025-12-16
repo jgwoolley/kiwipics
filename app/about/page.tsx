@@ -7,13 +7,34 @@ export default function App() {
         <main>
             <h3>About</h3>
             <p>Hello! Thanks for stopping by!</p>
-            <p>I am <b>James Woolley</b>, and I created this website for my final project for <b>CSCI90: Cloud Services, Infrastructure, and Computing</b>. This is a photo gallery for uploading pictures of everyone's favorite flightless bird the Kiwi. I spent 6 months working in New Zealand. And I thought it would be fun to theme my project on that trip.</p>
+            <p>I am <b>James Woolley</b>, and I created this website for my final project for <b>CSCI90: Cloud Services, Infrastructure, and Computing</b>. This is a photo gallery for uploading pictures of everyone's favorite flightless bird the <a href="https://en.wikipedia.org/wiki/Kiwi_(bird)" target="_blank" rel="noopener noreferrer">Kiwi</a>. I spent 6 months working in New Zealand. And I thought it would be fun to theme my project on that trip.</p>
 
             <h4>Key Features</h4>
             <ul>
                 <li>Ability for unauthenticated users to see photos uploaded by other users.</li>
                 <li>Ability for authenticated users to upload new photos for other users to see, and delete photos. Users should be required to give the name of the Kiwi pictured.</li>
                 <li>Ability to login, signout, change password, and delete account.</li>
+            </ul>
+
+            <h4>Links</h4>
+            <ul>
+                <li><a
+                    href="https://github.com/jgwoolley/kiwipics"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >Source Code</a></li>
+                <li><a
+                    // TODO: Fix
+                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >Short Video</a></li>
+                <li><a
+                    // TODO: Fix
+                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >Long Video</a></li>
             </ul>
 
             <h4>Technologies Used</h4>
@@ -78,36 +99,10 @@ export default function App() {
 
             <h4>Considerations</h4>
             <ul>
-                <li>There isn't any validation that uploaded images are <abbr title="Safe for Work">SFW</abbr>.</li>
+                <li>There isn't any validation that uploaded images are <abbr title="Safe for Work">SFW</abbr>. Lambdas are built into Amplify, and calls to Amazon Rekognition could be used to do this. </li>
                 <li>Users can delete any picture, pictures aren't associated with any specific user.</li>
                 <li>There are no limits on the amount or size of pictures a user can upload.</li>
                 <li>Some of the original features I had proposed are not included: such as specifying the true location where the picture was taken, or using Geoservices. I didn't want to overcomplicate the project any further.</li>
-            </ul>
-
-            <h4>Links</h4>
-            <ul>
-                <li><a
-                    href="https://en.wikipedia.org/wiki/Kiwi_(bird)"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >Wikipedia: Kiwi</a></li>
-                <li><a
-                    href="https://github.com/jgwoolley/kiwipics"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >Source Code</a></li>
-                <li><a
-                    // TODO: Fix
-                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >Short Video Explination</a></li>
-                <li><a
-                    // TODO: Fix
-                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >Long Video Explination</a></li>
             </ul>
         </main>
     );

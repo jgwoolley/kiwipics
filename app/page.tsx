@@ -17,9 +17,8 @@ type FinalPicture = {
   id: string,
   path: string,
   url: string,
-  kiwiName?: string,
-  lat?: number,
-  long?: number,
+  kiwiName: string,
+  kiwiLocation: string,
 }
 
 export default function App() {
@@ -53,9 +52,8 @@ export default function App() {
             id: picture.id,
             path: picture.picturePath,
             url: urlResult.url.toString(),
-            kiwiName: picture.kiwiName ?? undefined,
-            lat: picture.lat ?? undefined,
-            long: picture.long ?? undefined,
+            kiwiName: picture.kiwiName,
+            kiwiLocation: picture.kiwiLocation,
           });
         }
         setImages([...images, ...newImages]);
@@ -99,7 +97,7 @@ export default function App() {
             >
               <img
                 src={picture.url}
-                alt={picture.kiwiName}
+                alt={`${picture.kiwiName} from ${picture.kiwiLocation}`}
                 style={{
                   maxWidth: '100%',
                   height: 'auto',
@@ -118,7 +116,7 @@ export default function App() {
                 style={{
                   fontStyle: 'italic',
                 }}
-              >{picture.kiwiName}</span>
+              >{`${picture.kiwiName} from ${picture.kiwiLocation}`}</span>
               {user && (
                 <span
                   style={{
