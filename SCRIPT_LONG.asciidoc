@@ -17,3 +17,13 @@ The core technology demonstrated in this project, Amplify brings together many d
 * https://www.kiwipics.com/about : Provides information already included in this document, in regards to what the website is about, and the technologies used.
 * https://www.kiwipics.com/upload : This is the route where an authenticated user can provide a photo to upload along with the Kiwi’s name & location. If the user isn’t logged in yet, it should make it clear that the user needs to do so. If the fields are invalid (empty or missing), the user will be told which fields are in error. Once the image is uploaded the user will be redirected to the main route to see their image.
 * https://www.kiwipics.com/login : This page will prompt the user for their username and password utilizing built in AWS Amplify UI components. The user will provide a username and password, and then be prompted to open the verification email sent from AWS. Then the user will be able to go back to this page and see they are logged in. A logged in user will be presented with the opportunity to change their password, logout, or delete their account.
+
+*Walkthrough of Code*
+
+./amplify/data
+./app/upload/
+./app/page
+
+./amplify/storage/
+./app/upload/
+./app/page

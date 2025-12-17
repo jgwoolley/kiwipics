@@ -24,8 +24,7 @@ export default function App() {
                     rel="noopener noreferrer"
                 >Source Code</a></li>
                 <li><a
-                    // TODO: Fix
-                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    href="https://youtu.be/XSe2aGDy8-0"
                     target="_blank"
                     rel="noopener noreferrer"
                 >Short Video</a></li>
