@@ -2,10 +2,10 @@
 
 Hello! I am James Woolley. Today I am going to be giving you my final presentation, entitled: KiwiPics - A Photo Gallery utilizing AWS Amplify. After I spent 6 months working in New Zealand, I decided to create a place for users to share pictures of everyone's favorite flightless bird. 
 
-The core technology demonstrated in this project, Amplify brings together many different AWS products together to create front end applications.
+AWS Amplify brings together many different AWS products to create front end applications.
 
-* Amplify creates Cognito User Pools to handle client authentication.
 * Amplify can deploy mock environments for developers to test features.
+* Amplify creates Cognito User Pools to handle client authentication.
 * Customer files are stored in S3.
 * Customer data is managed through DynamoDB.
 

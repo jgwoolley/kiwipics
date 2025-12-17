@@ -8,7 +8,7 @@ import { AuthUser, getCurrentUser } from 'aws-amplify/auth';
 import { generateClient } from "aws-amplify/data";
 import { getUrl, remove } from 'aws-amplify/storage';
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 Amplify.configure(outputs);
 const client = generateClient<Schema>();
