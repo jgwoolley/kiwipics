@@ -30,7 +30,7 @@ export default function App() {
                 >Short Video</a></li>
                 <li><a
                     // TODO: Fix
-                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    href="https://www.youtube.com/watch?v=BrWHcQFy5Kc"
                     target="_blank"
                     rel="noopener noreferrer"
                 >Long Video</a></li>
